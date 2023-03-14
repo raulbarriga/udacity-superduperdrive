@@ -54,11 +54,4 @@ public class UserController {
         // logic to show the login form
         return "login";
     }
-
-    @PostMapping("/login")
-    public String processLoginForm(@ModelAttribute("User") User user) {
-        // logic to process the login form
-        // TODO: handle the `signupError` & `logoutSuccess` variables from the login.html template
-        //
-    }
 }

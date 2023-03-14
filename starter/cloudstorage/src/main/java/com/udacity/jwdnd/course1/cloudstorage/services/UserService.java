@@ -26,17 +26,11 @@ public class UserService {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
-
         // Hash the user's password with the generated salt
-        String hashedPassword = hashService.getHashedValue(user.getPassword(), Base64.getEncoder().encodeToString(salt));
-
-        // Store the hashed password and salt in the User object
-        user.setPassword(hashedPassword);
-        user.setSalt(Base64.getEncoder().encodeToString(salt));
+        String encodedSalt = Base64.getEncoder().encodeToString(salt);
+        String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
 
         // Insert the user into the database
-        return userMapper.insert(user);
+        return userMapper.insert(new User(null, user.getUsername(), encodedSalt, hashedPassword, user.getFirstName(), user.getLastName()));
     }
-
-
 }
