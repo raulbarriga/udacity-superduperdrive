@@ -33,4 +33,9 @@ public class UserService {
         // Insert the user into the database
         return userMapper.insert(new User(null, user.getUsername(), encodedSalt, hashedPassword, user.getFirstName(), user.getLastName()));
     }
+    // login service is handled by the AuthenticationService together with the
+    // SecurityConfig file in the config folder
+    public User getUser(String username) {
+        return userMapper.getUser(username);
+    }
 }

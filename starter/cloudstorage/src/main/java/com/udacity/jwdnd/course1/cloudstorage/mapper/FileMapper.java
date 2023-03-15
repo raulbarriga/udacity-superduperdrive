@@ -1,8 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage.mapper;
 
-import org.springframework.stereotype.Service;
+import org.apache.ibatis.annotations.Mapper;
 
-@Service
+@Mapper
 public interface FileMapper {
 
 }

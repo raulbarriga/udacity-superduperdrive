@@ -2,7 +2,6 @@ package com.udacity.jwdnd.course1.cloudstorage.controllers;
 
 import com.udacity.jwdnd.course1.cloudstorage.models.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,24 +10,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class UserController {
-    @Autowired
-    private UserService userService;
+@RequestMapping("/signup")
+public class SignupController {
+    private final UserService userService;
 
-    public UserController(UserService userService) {
+    public SignupController(UserService userService) {
         this.userService = userService;
     }
 
-    @@GetMapping("/signup")
+    @GetMapping()
     public String showSignupForm() {
         // the returned string "signup" has to match the thymeleaf template file name
         return "signup";
     }
 
-    @PostMapping("/signup")
-    public String registerNewUser(@ModelAttribute("User") User user, Model model) {
+    @PostMapping()
+    public String registerNewUser(@ModelAttribute User user, Model model) {
         // logic to process the signup form
-        String signupError = null;
+        String signupError;
 
         // Check if username is available
         if (!userService.isUsernameAvailable(user.getUsername())) {
@@ -47,11 +46,5 @@ public class UserController {
         }
 
         return "signup";
-    }
-
-    @RequestMapping("/login")
-    public String showLoginForm() {
-        // logic to show the login form
-        return "login";
     }
 }

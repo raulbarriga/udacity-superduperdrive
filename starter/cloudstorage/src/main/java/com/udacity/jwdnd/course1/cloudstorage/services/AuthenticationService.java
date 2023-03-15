@@ -27,13 +27,17 @@ public class AuthenticationService implements AuthenticationProvider {
 
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-
+        System.out.println("Inside authenticate");
         User user = userMapper.getUser(username);
         if(user != null){
+            System.out.println("user is not null");
             String encodedSalt = user.getSalt();
             String hashedPassword = hashService.getHashedValue(password, encodedSalt);
             if(user.getPassword().equals(hashedPassword)){
+                System.out.println("User is authenticated!");
                 return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
+            } else {
+                System.out.println("passwords didn't match");
             }
         }
 
