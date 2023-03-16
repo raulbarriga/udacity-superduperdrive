@@ -15,7 +15,7 @@
     <description>Final Project for Udacity's Spring Boot Basics course.</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>14</java.version>
     </properties>
 
     <dependencies>
@@ -96,6 +96,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.0.4</version>
             </plugin>
         </plugins>
     </build>

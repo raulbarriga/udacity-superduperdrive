@@ -13,15 +13,12 @@ import java.util.Base64;
 
 @Component
 public class HashService {
-
-    public final Logger logger = LoggerFactory.getLogger(HashService.class);
+    private final Logger logger = LoggerFactory.getLogger(HashService.class);
 
     public String getHashedValue(String data, String salt) {
         byte[] hashedValue = null;
 
-        int iterCount = 5000;
-        int derivedKeyLength = 128;
-        KeySpec spec = new PBEKeySpec(data.toCharArray(), salt.getBytes(), iterCount, derivedKeyLength);
+        KeySpec spec = new PBEKeySpec(data.toCharArray(), salt.getBytes(), 5000, 128);
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             hashedValue = factory.generateSecret(spec).getEncoded();

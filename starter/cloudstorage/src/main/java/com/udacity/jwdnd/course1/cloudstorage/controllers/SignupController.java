@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/signup")
@@ -25,26 +26,39 @@ public class SignupController {
     }
 
     @PostMapping()
-    public String registerNewUser(@ModelAttribute User user, Model model) {
-        // logic to process the signup form
-        String signupError;
+    public String registerNewUser(@ModelAttribute User user, Model model, RedirectAttributes redirectAttributes) {
+        String signupError = null;
+        boolean signUpSuccessful = false;
 
         // Check if username is available
         if (!userService.isUsernameAvailable(user.getUsername())) {
             signupError = "Username already exists";
             model.addAttribute("signupError", signupError);
-            return "signup";
-        } else {
+        }
+
+        if (signupError == null) {
             // Create user account
             int isUserCreated = userService.createUser(user);
+            System.out.println("isUserCreated: " + isUserCreated);
             if (isUserCreated < 0) {
                 signupError = "There was an error signing you up. Please try again.";
-                model.addAttribute("signupError", signupError);
-            } else {
-                model.addAttribute("signupSuccess", true);
             }
         }
 
-        return "signup";
+        if (signupError == null) {
+            model.addAttribute("signupSuccess", true);
+            signUpSuccessful = true;
+        } else {
+            model.addAttribute("signupError", signupError);
+        }
+
+        if (signUpSuccessful) {
+            System.out.println("signup successful");
+            // add flash attribute here
+            redirectAttributes.addFlashAttribute("isSuccess", true);
+            return "redirect:/login";
+        } else {
+            return "signup";
+        }
     }
 }

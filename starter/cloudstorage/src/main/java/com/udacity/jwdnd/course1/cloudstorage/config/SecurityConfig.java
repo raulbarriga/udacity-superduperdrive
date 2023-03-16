@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     public SecurityConfig(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.formLogin()
                 .loginPage("/login")
+                .loginPage("/login?logout")
                 .permitAll();
 
         http.formLogin()
