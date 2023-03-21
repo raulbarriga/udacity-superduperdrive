@@ -27,7 +27,7 @@
                 <div class="tab-content" id="nav-tabContent">
                     <!-- Files View Tab -->
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form action="#" th:action="@{'/file'}" enctype="multipart/form-data" method="POST">
+                        <form action="#" th:action="@{'/file/upload'}" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -53,10 +53,21 @@
                                 <tbody>
                                 <tr th:each="file : ${files}">
                                     <td>
-                                        <a target="_blank" class="btn btn-success">View</a>
-                                        <a  class="btn btn-danger">Delete</a>
+                                        <a
+                                                target="_blank"
+                                                class="btn btn-success"
+                                                th:href="@{/file/download/{fileId} (
+                                                fileId = ${file.fileId})
+                                                }"
+                                        >View</a>
+                                        <a
+                                                class="btn btn-danger"
+                                                th:href="@{/file/delete/{fileId} (
+                                                fileId = ${file.fileId})
+                                                }"
+                                        >Delete</a>
                                     </td>
-                                    <th scope="row">ExampleFile.txt</th>
+                                    <th scope="row" th:text="${file.fileName}">ExampleFile.txt</th>
                                 </tr>
                                 </tbody>
                             </table>
@@ -64,7 +75,7 @@
                     </div>
 
                     <!-- Notes View Tab -->
-                    <div class="tab-pane fade" id="nav-notes" th:fragment="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
+                    <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
                         <!-- Error/Success message -->
                         <div th:if="${noteSuccess}" th:text="${noteSuccess}" class="alert alert-dark"></div>
                         <div th:if="${noteError}" th:text="${noteError}" class="alert alert-danger"></div>

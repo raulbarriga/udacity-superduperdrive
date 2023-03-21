@@ -2,19 +2,19 @@ package com.udacity.jwdnd.course1.cloudstorage.models;
 
 public class File {
     private Integer fileId;
-    private String filename;
-    private String contenttype;
-    private String filesize;
-    private Integer userid;
-    private byte[] filedata;
+    private String fileName;
+    private String contentType;
+    private String fileSize;
+    private Integer userId;
+    private byte[] fileData;
 
-    public File(Integer fileId, String filename, String contenttype, String filesize, Integer userid, byte[] filedata) {
+    public File(Integer fileId, String fileName, String contentType, String fileSize, Integer userId, byte[] fileData) {
         this.fileId = fileId;
-        this.filename = filename;
-        this.contenttype = contenttype;
-        this.filesize = filesize;
-        this.userid = userid;
-        this.filedata = filedata;
+        this.fileName = fileName;
+        this.contentType = contentType;
+        this.fileSize = fileSize;
+        this.userId = userId;
+        this.fileData = fileData;
     }
 
     public Integer getFileId() {
@@ -25,43 +25,43 @@ public class File {
         this.fileId = fileId;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
-    public String getContenttype() {
-        return contenttype;
+    public String getContentType() {
+        return contentType;
     }
 
-    public void setContenttype(String contenttype) {
-        this.contenttype = contenttype;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
-    public String getFilesize() {
-        return filesize;
+    public String getFileSize() {
+        return fileSize;
     }
 
-    public void setFilesize(String filesize) {
-        this.filesize = filesize;
+    public void setFileSize(String fileSize) {
+        this.fileSize = fileSize;
     }
 
-    public Integer getUserid() {
-        return userid;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUserid(Integer userid) {
-        this.userid = userid;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public byte[] getFiledata() {
-        return filedata;
+    public byte[] getFileData() {
+        return fileData;
     }
 
-    public void setFiledata(byte[] filedata) {
-        this.filedata = filedata;
+    public void setFileData(byte[] fileData) {
+        this.fileData = fileData;
     }
 }
