@@ -27,6 +27,10 @@
                 <div class="tab-content" id="nav-tabContent">
                     <!-- Files View Tab -->
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+                        <!-- Error/Success message -->
+                        <div th:if="${fileSuccess}" th:text="${fileSuccess}" class="alert alert-dark"></div>
+                        <div th:if="${fileError}" th:text="${fileError}" class="alert alert-danger"></div>
+
                         <form action="#" th:action="@{'/file/upload'}" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
@@ -56,8 +60,8 @@
                                         <a
                                                 target="_blank"
                                                 class="btn btn-success"
-                                                th:href="@{/file/download/{fileId} (
-                                                fileId = ${file.fileId})
+                                                th:href="@{/file/download/{fileName} (
+                                                fileName = ${file.fileName})
                                                 }"
                                         >View</a>
                                         <a
@@ -77,10 +81,10 @@
                     <!-- Notes View Tab -->
                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
                         <!-- Error/Success message -->
-                        <div th:if="${noteSuccess}" th:text="${noteSuccess}" class="alert alert-dark"></div>
+                        <div id="note-success-msg" th:if="${noteSuccess}" th:text="${noteSuccess}" class="alert alert-dark"></div>
                         <div th:if="${noteError}" th:text="${noteError}" class="alert alert-danger"></div>
 
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
+                        <button id="add-new-note" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                             + Add a New Note
                         </button>
 
@@ -98,6 +102,7 @@
                                         <td>
                                             <!-- showNoteModal(noteId, noteTitle, noteDescription) -->
                                             <button
+                                                    id="edit-note-btn"
                                                     type="button"
                                                     class="btn btn-success"
                                                     th:data-noteid="${note.noteId}"
@@ -106,6 +111,7 @@
                                                     th:onclick="showNoteModal(this.dataset.noteid, this.dataset.notetitle, this.dataset.notedescription)"
                                             >Edit</button>
                                             <a
+                                                    id="delete-note-btn"
                                                     class="btn btn-danger"
                                                     th:href="@{/note/delete/{noteId} (
                                                     noteId = ${note.noteId})
@@ -145,7 +151,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                        <button id="save-note-btn" type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>
@@ -155,10 +161,10 @@
                     <!-- Credential View Tab -->
                     <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
                         <!-- Error/Success message -->
-                        <div th:if="${credentialSuccess}" th:text="${credentialSuccess}" class="alert alert-dark"></div>
+                        <div id="credential-success-msg" th:if="${credentialSuccess}" th:text="${credentialSuccess}" class="alert alert-dark"></div>
                         <div th:if="${credentialError}" th:text="${credentialError}" class="alert alert-danger"></div>
 
-                        <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
+                        <button id="add-new-credential" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
 
@@ -173,28 +179,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="credential: ${credentials}">
-                                    <td>
-                                        <button data-toggle="modal" data-target="#credentialModal"
-                                                type="button"
-                                                class="btn btn-success"
-                                                th:data-credentialid="${credential.credentialId}"
-                                                th:data-credentialurl="${credential.url}"
-                                                th:data-credentialusername="${credential.username}"
-                                                th:data-credentialpassword="${encryptionService.decryptValue(credential.password, credential.key)}"
-                                                th:onclick="showCredentialModal(this.dataset.credentialid, this.dataset.credentialurl, this.dataset.credentialusername, this.dataset.credentialpassword)"
-                                        >Edit</button>
-                                        <a
-                                                class="btn btn-danger"
-                                                th:href="@{/credential/delete/{credentialId} (
-                                                    credentialId = ${credential.credentialId})
-                                                }"
-                                        >Delete</a>
-                                    </td>
-                                    <th scope="row" th:text="${credential.url}">Example Credential URL</th>
-                                    <td th:text="${credential.username}">Example Credential Username</td>
-                                    <td th:text="${credential.password}">Example Credential Password</td>
-                                </tr>
+                                    <tr th:each="credential: ${credentials}">
+                                        <td>
+                                            <button
+                                                    id="credential-edit-btn"
+                                                    data-toggle="modal"
+                                                    data-target="#credentialModal"
+                                                    type="button"
+                                                    class="btn btn-success"
+                                                    th:data-credentialid="${credential.credentialId}"
+                                                    th:data-credentialurl="${credential.url}"
+                                                    th:data-credentialusername="${credential.username}"
+                                                    th:data-credentialpassword="${encryptionService.decryptValue(credential.password, credential.key)}"
+                                                    th:onclick="showCredentialModal(this.dataset.credentialid, this.dataset.credentialurl, this.dataset.credentialusername, this.dataset.credentialpassword)"
+                                            >Edit</button>
+                                            <a
+                                                    id="delete-credential"
+                                                    class="btn btn-danger"
+                                                    th:href="@{/credential/delete/{credentialId} (
+                                                        credentialId = ${credential.credentialId})
+                                                    }"
+                                            >Delete</a>
+                                        </td>
+                                        <th scope="row" th:text="${credential.url}">Example Credential URL</th>
+                                        <td th:text="${credential.username}">Example Credential Username</td>
+                                        <td id="encrypted-pswd" th:text="${credential.password}">Example Credential Password</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -228,7 +238,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
+                                        <button id="save-credential" type="button" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>

@@ -27,16 +27,18 @@ public class FileService {
         return fileMapper.deleteFile(file.getFileId());
     }
 
-    public boolean isDuplicatenOrNoFileUploaded(String fileName) {
+    public boolean isDuplicateOrNoFileUploaded(String fileName, Integer userId) {
         if (fileName.isEmpty())
             return true;
 
         // check for duplicate file names
-        File file = this.getFile(fileName);
+        File file = this.getFileByName(fileName, userId);
+        // returns true if there's a duplicate file name in the db
+        // (comparison will not be null since there is a file with provided name)
         return file != null;
     }
 
-    private File getFile(String fileName) {
-        return this.fileMapper.getFile(fileName);
+    public File getFileByName(String fileName, Integer userId) {
+        return this.fileMapper.getFile(fileName, userId);
     }
 }

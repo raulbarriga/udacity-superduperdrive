@@ -28,6 +28,14 @@ public class NoteController {
         Integer userId = userService.getUser(authentication.getName()).getUserId();
         String noteError;
         int requestResponseNumber;
+        //String noteDescription = note.getNoteDescription();
+        //if (noteDescription != null && noteDescription.length() > 1000) {
+        //    // handle the case where the noteDescription is too long
+        //    // for example, you can return an error message to the user
+        //    noteError = "The note description can only be less than 1,000 characters long.";
+        //    redirectAttributes.addFlashAttribute("noteError", noteError);
+        //    return "redirect:/home";
+        //}
 
         // new note
         if(note.getNoteId() == null) {

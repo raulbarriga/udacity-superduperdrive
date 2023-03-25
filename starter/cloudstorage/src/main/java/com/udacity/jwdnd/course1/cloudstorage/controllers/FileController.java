@@ -3,13 +3,12 @@ package com.udacity.jwdnd.course1.cloudstorage.controllers;
 import com.udacity.jwdnd.course1.cloudstorage.models.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -27,50 +26,85 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@ModelAttribute("File") MultipartFile multipartFile, Authentication authentication, RedirectAttributes redirectAttributes) throws IOException {
+    public String uploadFile(@RequestParam("fileUpload") MultipartFile fileUpload, Authentication authentication, RedirectAttributes redirectAttributes) {
+        // fileUpload variable name has to match the name attribute in the input tag for the file upload
+        // @RequestParam("fileUpload") is used to check that we receive the `fileUpload` parameter
+        if (fileUpload == null || fileUpload.isEmpty()) {
+            redirectAttributes.addFlashAttribute("fileError", "Please select a file to upload.");
+            return "redirect:/home";
+        }
+
         Integer userId = userService.getUser(authentication.getName()).getUserId();
-        String fileUploadError = null;
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        long fileSize = multipartFile.getSize();
+        String fileError = null;
+        String fileName = StringUtils.cleanPath(fileUpload.getOriginalFilename());
+        long fileSize = fileUpload.getSize();
         long oneMB = 1024 * 1024;
 
         // check for errors
-        if (fileService.isDuplicatenOrNoFileUploaded(fileName)) {
+        if (fileService.isDuplicateOrNoFileUploaded(fileName, userId)) {
             if (fileName.isEmpty()) {
-                fileUploadError = "Please 'choose a file' before attempting to upload. ";
-                redirectAttributes.addFlashAttribute("fileUploadError", fileUploadError);
+                fileError = "Please 'choose a file' before attempting to upload. ";
+                redirectAttributes.addFlashAttribute("fileError", fileError);
             }
             else {
-                fileUploadError = "Filename: " + fileName + " is already taken. Try a different name. ";
-                redirectAttributes.addFlashAttribute("fileUploadError", fileUploadError);
+                fileError = "Filename: " + fileName + " is already taken. Try a different name. ";
+                redirectAttributes.addFlashAttribute("fileError", fileError);
             }
-        } else if (fileSize > oneMB) {
-            fileUploadError = "Fil size is greater than the limit of 1MB";
         } else {
-            // handle successful file upload
-            int isFileInserted = fileService.insertFile(new File(
-                    null,
-                    fileName,
-                    multipartFile.getContentType(),
-                    String.valueOf(fileSize),
-                    userId,
-                    multipartFile.getBytes()
-            ));
+            try {
+                // handle successful file upload
+                int isFileInserted = fileService.insertFile(new File(
+                        null,
+                        fileName,
+                        fileUpload.getContentType(),
+                        String.valueOf(fileSize),
+                        userId,
+                        fileUpload.getBytes()
+                ));
 
-            if (isFileInserted < 0) {
-                fileUploadError = "There was an error uploading file.";
+                if (isFileInserted < 0) {
+                    fileError = "There was an error uploading file.";
+                }
+            } catch (MaxUploadSizeExceededException e) {
+                fileError = "File size is greater than the limit of 1MB";
+                redirectAttributes.addFlashAttribute("fileError", fileError);
+                return "redirect:/home";
+            } catch (IOException e) {
+                fileError = "There was an error uploading file.";
+                redirectAttributes.addFlashAttribute("fileError", fileError);
+                return "redirect:/home";
             }
         }
 
-        if (fileUploadError == null) {
-            redirectAttributes.addFlashAttribute("fileUploadSuccess", true);
+        if (fileError == null) {
+            redirectAttributes.addFlashAttribute("fileSuccess", "Successfully uploaded file.");
         } else {
-            redirectAttributes.addFlashAttribute("fileUploadError", fileUploadError);
+            redirectAttributes.addFlashAttribute("fileError", fileError);
         }
 
         return "redirect:/home";
     }
-    
+
+    @GetMapping("/download/{fileName}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName, Authentication authentication, RedirectAttributes redirectAttributes) {
+        Integer userId = userService.getUser(authentication.getName()).getUserId();
+        File fileData = fileService.getFileByName(fileName, userId);
+
+        if (fileData == null) {
+            redirectAttributes.addFlashAttribute("fileError", "Error downloading file.");
+        }
+
+        redirectAttributes.addFlashAttribute("fileSuccess", "Downloading file successful.");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDisposition(ContentDisposition.builder("attachment")
+                .filename(fileData.getFileName()).build());
+        headers.setContentLength(Long.parseLong(fileData.getFileSize()));
+
+        return new ResponseEntity<>(fileData.getFileData(), headers, HttpStatus.OK);
+    }
+
+
     @GetMapping("/delete/{fileId}")
     public String deleteFile(@ModelAttribute("File") File file, RedirectAttributes redirectAttributes){
         int requestResponse = fileService.deleteFile(file);
