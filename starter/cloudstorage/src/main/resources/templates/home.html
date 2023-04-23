@@ -3,27 +3,34 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+        <meta name="color-scheme" content="dark light">
         <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
-
+        <!-- After the Bootstrap CSS link, to ensure that my styles won't be overwritten by the Bootstrap styles -->
+        <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/styles.css}">
         <title>Home</title>
     </head>
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
+                <label class="form-check-label" for="flexSwitchCheckChecked">Dark Mode</label>
+            </div>
             <div id="logoutDiv">
                 <form action="#" th:action="@{/logout}" method="POST">
-                    <button id="logout-button" type="submit" class="btn btn-secondary float-right">Logout</button>
+                    <button id="logout-button" type="submit" class="btn btn-secondary float-end">Logout</button>
                 </form>
             </div>
+
             <div id="contentDiv" style="clear: right;">
                 <!-- tab nav -->
-                <nav style="clear: right;">
-                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
-                        <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
-                        <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>
+                <nav style="clear: right;" class="mb-3">
+                    <div class="nav nav-pills" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" href="#nav-files" id="nav-files-tab" data-bs-toggle="pill" data-bs-target="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
+                        <a class="nav-item nav-link" href="#nav-notes" id="nav-notes-tab" data-bs-toggle="pill" data-bs-target="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
+                        <a class="nav-item nav-link" href="#nav-credentials" id="nav-credentials-tab" data-bs-toggle="pill" data-bs-target="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>
                     </div>
                 </nav>
+
                 <div class="tab-content" id="nav-tabContent">
                     <!-- Files View Tab -->
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
@@ -35,10 +42,10 @@
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
-                                        <label for="fileUpload">Upload a New File:</label>
+                                        <label for="fileUpload" class="form-label">Upload a New File:</label>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="file" class="form-control-file" id="fileUpload" name="fileUpload">
+                                        <input type="file" class="form-control" id="fileUpload" name="fileUpload">
                                     </div>
                                     <div class="col-sm-4">
                                         <button type="submit" class="btn btn-dark" id="uploadButton">Upload</button>
@@ -84,7 +91,13 @@
                         <div id="note-success-msg" th:if="${noteSuccess}" th:text="${noteSuccess}" class="alert alert-dark"></div>
                         <div th:if="${noteError}" th:text="${noteError}" class="alert alert-danger"></div>
 
-                        <button id="add-new-note" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
+                        <button
+                                id="add-new-note"
+                                style="margin: 0.25em;"
+                                type="button"
+                                class="btn btn-info float-end"
+                                onclick="showNoteModal()"
+                        >
                             + Add a New Note
                         </button>
 
@@ -100,7 +113,6 @@
                                 <tbody>
                                     <tr th:each="note : ${notes}">
                                         <td>
-                                            <!-- showNoteModal(noteId, noteTitle, noteDescription) -->
                                             <button
                                                     id="edit-note-btn"
                                                     type="button"
@@ -125,19 +137,23 @@
                             </table>
                         </div>
                         <!--  Note Creation/Updating Modal -->
-                        <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="noteModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
+                        <div class="modal fade"
+                             id="noteModal"
+                             tabindex="-1"
+                             aria-labelledby="noteModalLabel"
+                             aria-hidden="true"
+                        >
+                            <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="noteModalLabel">Note</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                         </button>
                                     </div>
                                     <div class="modal-body">
                                         <!-- Use this form modal to either create a new note or update an existing one -->
-                                        <form action="#" th:action="@{/note}" th:object="${Note}" method="POST">
-                                            <input type="hidden" name="noteId" id="note-id" >
+                                        <form class="form-submit" id="note-form" th:action="@{/note}" th:object="${Note}" method="POST">
+                                            <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
                                                 <input type="text" name= "noteTitle"  class="form-control" id="note-title" maxlength="20" required>
@@ -150,8 +166,12 @@
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button id="save-note-btn" type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button id="save-note-btn"
+                                                type="button"
+                                                class="btn btn-primary"
+                                                onclick="$('#noteSubmit').click();"
+                                        >Save changes</button>
                                     </div>
                                 </div>
                             </div>
@@ -164,7 +184,14 @@
                         <div id="credential-success-msg" th:if="${credentialSuccess}" th:text="${credentialSuccess}" class="alert alert-dark"></div>
                         <div th:if="${credentialError}" th:text="${credentialError}" class="alert alert-danger"></div>
 
-                        <button id="add-new-credential" style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
+                        <button id="add-new-credential"
+                                style="margin: 0.25em;"
+                                type="button"
+                                class="btn btn-info float-end"
+                                onclick="showCredentialModal()"
+                        >
+<!--                                data-bs-toggle="modal"-->
+<!--                                data-bs-target="#credentialModal"-->
                             + Add a New Credential
                         </button>
 
@@ -183,8 +210,6 @@
                                         <td>
                                             <button
                                                     id="credential-edit-btn"
-                                                    data-toggle="modal"
-                                                    data-target="#credentialModal"
                                                     type="button"
                                                     class="btn btn-success"
                                                     th:data-credentialid="${credential.credentialId}"
@@ -209,17 +234,21 @@
                             </table>
                         </div>
                         <!--  Credential Creation Modal -->
-                        <div class="modal fade" id="credentialModal" tabindex="-1" role="dialog" aria-labelledby="credentialModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
+                        <div class="modal fade"
+                             id="credentialModal"
+                             tabindex="-1"
+                             aria-labelledby="credentialModalLabel"
+                             aria-hidden="true"
+                        >
+                            <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="credentialModalLabel">Credential</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" th:action="@{/credential}" method="POST">
+                                        <form class="form-submit" id="credential-form" th:action="@{/credential}" method="POST">
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="credential-url" class="col-form-label">URL</label>
@@ -233,12 +262,21 @@
                                                 <label for="credential-password" class="col-form-label">Password</label>
                                                 <input type="text" name= "password" class="form-control" id="credential-password" maxlength="30" required>
                                             </div>
-                                            <button id="credentialSubmit" type="submit" class="d-none"></button>
+                                            <button id="credentialSubmit"
+                                                    type="submit"
+                                                    class="d-none"
+                                            ></button>
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button id="save-credential" type="button" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
+                                        <button type="button"
+                                                class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                        <button id="save-credential"
+                                                type="button"
+                                                class="btn btn-primary"
+                                                onclick="$('#credentialSubmit').click();"
+                                        >Save changes</button>
                                     </div>
                                 </div>
                             </div>
@@ -248,28 +286,10 @@
             </div>
         </div>
 
-        <script th:src="@{/js/jquery-slim.min.js}"></script>
-        <script th:src="@{/js/popper.min.js}"></script>
-        <script th:src="@{/js/bootstrap.min.js}"></script>
-
-        <!--For opening the modals -->
-        <script type="text/javascript">
-            // For opening the note modal
-            function showNoteModal(noteId, noteTitle, noteDescription) {
-                $('#note-id').val(noteId ? noteId : '');
-                $('#note-title').val(noteTitle ? noteTitle : '');
-                $('#note-description').val(noteDescription ? noteDescription : '');
-                $('#noteModal').modal('show');
-            }
-
-            // For opening the credentials modal
-            function showCredentialModal(credentialId, url, username, password) {
-                $('#credential-id').val(credentialId ? credentialId : '');
-                $('#credential-url').val(url ? url : '');
-                $('#credential-username').val(username ? username : '');
-                $('#credential-password').val(password ? password : '');
-                $('#credentialModal').modal('show');
-            }
-        </script>
+        <!-- jquery includes ajax        -->
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+        <!-- My own custom js -->
+        <script type="text/javascript" th:src="@{/js/script.js}"></script>
     </body>
-≤</html>
+</html>

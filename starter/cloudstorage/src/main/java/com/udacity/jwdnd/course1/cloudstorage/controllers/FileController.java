@@ -26,13 +26,20 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("fileUpload") MultipartFile fileUpload, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String uploadFile(@RequestParam("fileUpload") MultipartFile fileUpload,
+                             Authentication authentication,
+                             RedirectAttributes redirectAttributes
+
+    ) {
         // fileUpload variable name has to match the name attribute in the input tag for the file upload
         // @RequestParam("fileUpload") is used to check that we receive the `fileUpload` parameter
         if (fileUpload == null || fileUpload.isEmpty()) {
             redirectAttributes.addFlashAttribute("fileError", "Please select a file to upload.");
             return "redirect:/home";
         }
+
+        // to stay in the same html tab that made the request
+        //redirectAttributes.addAttribute("activeTab", activeTab);
 
         Integer userId = userService.getUser(authentication.getName()).getUserId();
         String fileError = null;
@@ -84,7 +91,7 @@ public class FileController {
 
         return "redirect:/home";
     }
-
+// @RequestParam(name = "activeTab", defaultValue = "file") String activeTab
     @GetMapping("/download/{fileName}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName, Authentication authentication, RedirectAttributes redirectAttributes) {
         Integer userId = userService.getUser(authentication.getName()).getUserId();

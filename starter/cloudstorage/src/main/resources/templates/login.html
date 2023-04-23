@@ -3,27 +3,35 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+        <meta name="color-scheme" content="dark light">
         <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}">
-
+        <!-- After the Bootstrap CSS link, to ensure that my styles won't be overwritten by the Bootstrap styles -->
+        <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/styles.css}">
         <title>Login</title>
     </head>
     <body class="p-3 mb-2 bg-light text-black">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
+            <label class="form-check-label" for="flexSwitchCheckChecked">Dark Mode</label>
+        </div>
+
         <div class="container justify-content-center w-25 p-3" style="background-color: #eeeeee; margin-top: 5em;">
             <h1 class="display-5">Login</h1>
             <form action="#" th:action="@{/login}" method="POST">
+
                 <div th:if="${param.error}" class="alert alert-danger">
                     Invalid username or password
                 </div>
                 <div th:if="${param.logout}" class="alert alert-dark">
                     You have been logged out
                 </div>
-                <div class="form-group">
-                    <label for="inputUsername">Username</label>
+
+                <div class="row mb-3">
+                    <label for="inputUsername" class="form-label">Username</label>
                     <input type="text" class="form-control" name="username" id="inputUsername" placeholder="Enter Username" maxlength="20" required>
                 </div>
-                <div class="form-group">
-                    <label for="inputPassword">Password</label>
+                <div class="row mb-3">
+                    <label for="inputPassword" class="form-label">Password</label>
                     <input type="password" class="form-control" name="password" id="inputPassword" placeholder="Enter Password" maxlength="20" required>
                 </div>
                 <button type="submit" class="btn btn-primary" id="login-button">Login</button>
@@ -33,5 +41,10 @@
                 <label><a id="signup-link" th:href="@{/signup}">Click here to sign up</a></label>
             </div>
         </div>
+        <!-- jquery includes ajax        -->
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+        <!-- My own custom js -->
+        <script type="text/javascript" th:src="@{/js/script.js}"></script>
     </body>
 </html>

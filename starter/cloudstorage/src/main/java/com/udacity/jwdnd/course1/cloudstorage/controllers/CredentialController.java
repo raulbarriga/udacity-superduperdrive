@@ -5,10 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -24,7 +21,9 @@ public class CredentialController {
     }
 
     @PostMapping()
-    public String addOrUpdateCredential(@ModelAttribute("Credential") Credential credential, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String addOrUpdateCredential(@ModelAttribute("Credential") Credential credential,
+                                        Authentication authentication,
+                                        RedirectAttributes redirectAttributes) {
         Integer userId = userService.getUser(authentication.getName()).getUserId();
         String credentialError;
         int requestResponseNumber;
@@ -56,13 +55,14 @@ public class CredentialController {
                 redirectAttributes.addFlashAttribute("credentialSuccess", "Successfully edited credential.");
             }
         }
+
         return "redirect:/home";
     }
 
 
     @GetMapping("/delete/{credentialId}")
-    public String deleteCredential (@ModelAttribute("Credential") Credential credential, RedirectAttributes
-    redirectAttributes){
+    public String deleteCredential (@ModelAttribute("Credential") Credential credential,
+                                    RedirectAttributes redirectAttributes){
         int requestResponse = credentialService.deleteCredential(credential);
 
         if (requestResponse < 0) {
